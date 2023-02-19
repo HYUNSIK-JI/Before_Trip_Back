@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404
 from users.models import User
-from .serializers import ReviewSerializer
+from .serializers import ReviewSerializer, CommentSerializer
 from users.views import AuthAPIView
 from .models import Articles, Comment
 import jwt
@@ -59,11 +59,25 @@ class ReviewDetail(APIView):
 class ReviewCommentList(APIView):
 
     def get(self, request, pk):
-        pass
+        articles = Articles.objects.get(pk=pk)
+        comments = Comment.objects.filter(ariticles_id=articles.pk).order_by("-pk")
+        
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
 
     def post(self, request, pk):
-        pass
-
+        
+        serializer = CommentSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            access = request.COOKIES.get('access', None)
+            payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
+            user_pk = payload.get('user_id')
+            
+            serializer.save(ariticles=Articles.objects.get(pk=pk), user=User.objects.get(pk=user_pk))
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ReviewComment(APIView):
 

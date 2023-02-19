@@ -11,13 +11,13 @@ class Articles(models.Model):
     like_users = models.ManyToManyField(User, related_name="like_articles")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-class Photo(models.Model):
-    ariticles = models.ForeignKey(Articles, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="images/", blank=True)
+# class Photo(models.Model):
+#     ariticles = models.ForeignKey(Articles, on_delete=models.CASCADE)
+#     image = models.ImageField(upload_to="images/", blank=True)
 
 class Comment(models.Model):
-    content = models.CharField(max_length=80)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=80)
     ariticles = models.ForeignKey(Articles, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
