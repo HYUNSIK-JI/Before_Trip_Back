@@ -6,7 +6,7 @@ from django.http import Http404
 from users.models import User
 from .serializers import ReviewSerializer
 from users.views import AuthAPIView
-from .models import Articles
+from .models import Articles, Comment
 import jwt
 from drfproject.settings import SECRET_KEY, SIMPLE_JWT
 # Create your views here.
@@ -55,3 +55,26 @@ class ReviewDetail(APIView):
         review = self.get_object(pk)
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ReviewCommentList(APIView):
+
+    def get(self, request, pk):
+        pass
+
+    def post(self, request, pk):
+        pass
+
+
+class ReviewComment(APIView):
+
+    def get_object(self, pk, comment_pk):
+        pass
+
+    def get(self, requset, pk, comment_pk, format=None):
+        pass
+
+    def put(self, request, pk, comment_pk, format=None):
+        pass
+    
+    def delete(self, request, pk, comment_pk, format=None):
+        pass
