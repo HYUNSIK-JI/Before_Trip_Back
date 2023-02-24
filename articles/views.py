@@ -4,10 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404
 from users.models import User
-from .serializers import ReviewSerializer, CommentSerializer
+from .serializers import ReviewSerializer, CommentSerializer, ReviewBestSerializer
 from users.views import AuthAPIView
 from .models import Articles, Comment
 import jwt
+from django.db.models import Q, Count
 from drfproject.settings import SECRET_KEY, SIMPLE_JWT
 # Create your views here.
 
@@ -37,19 +38,18 @@ class ReviewDetail(APIView):
             return Articles.objects.get(pk=pk)
         except Articles.DoesNotExist:
             raise Http404
-    def get(self, requset, pk, format=None):
+    def get(self, requset, pk):
         review = self.get_object(pk)
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
+    def patch(self, request, pk):
         review = self.get_object(pk)
         serializer = ReviewSerializer(review, data=request.data)        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    def delete(self, request, pk, format=None):
+    def delete(self, request, pk):
         review = self.get_object(pk)
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -102,3 +102,9 @@ class ReviewComment(APIView):
         comment = self.get_object(pk, comment_pk)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class ReviewBest(APIView):
+    def get(self, request):
+        reviews = Articles.objects.annotate(nums=Count('like_users')).order_by("-nums")
+        serializer = ReviewBestSerializer(reviews, many=True)
+        return Response(serializer.data)
