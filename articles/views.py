@@ -38,8 +38,9 @@ class ReviewDetail(APIView):
             return Articles.objects.get(pk=pk)
         except Articles.DoesNotExist:
             raise Http404
-    def get(self, requset, pk):
+    def get(self, request, pk):
         review = self.get_object(pk)
+        
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
     def patch(self, request, pk):
@@ -53,6 +54,7 @@ class ReviewDetail(APIView):
         review = self.get_object(pk)
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ReviewCommentList(APIView):
 
@@ -105,6 +107,30 @@ class ReviewComment(APIView):
     
 class ReviewBest(APIView):
     def get(self, request):
-        reviews = Articles.objects.annotate(nums=Count('like_users')).order_by("-nums")
+        reviews = Articles.objects.annotate(nums=Count('like_articles')).order_by("-nums")
         serializer = ReviewBestSerializer(reviews, many=True)
+        return Response(serializer.data)
+
+class Reviewlike(APIView):
+
+    def get(self, request, pk):
+        review = Articles.objects.get(pk=pk)
+        access = request.COOKIES.get('access', None)
+        payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
+        user_pk = payload.get('user_id')
+
+        user = User.objects.get(pk=user_pk)
+
+        user_email = user.email
+        
+        if user_email in review.like_articles.all():
+            print(review.like_articles.all(), 1)
+            review.like_articles.remove(user_email)
+            print(review.like_articles.all(), 2)
+        else:
+            print(review.like_articles.all(), 3)
+            review.like_articles.add(user_email)
+            print(review.like_articles.all(), 4)
+        print(review.like_articles.all())
+        serializer = ReviewSerializer(user)
         return Response(serializer.data)

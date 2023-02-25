@@ -5,7 +5,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.email')
     class Meta:
         model = Articles
-        fields = ("id", "title", "content", "created_at", "updated_at", "user")
+        fields = ("id", "title", "content", "created_at", "updated_at", "user", "like_articles")
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.email')
