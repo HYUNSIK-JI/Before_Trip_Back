@@ -121,16 +121,14 @@ class Reviewlike(APIView):
 
         user = User.objects.get(pk=user_pk)
 
-        user_email = user.email
-        
-        if user_email in review.like_articles.all():
+        if user in review.like_articles.all():
             print(review.like_articles.all(), 1)
-            review.like_articles.remove(user_email)
+            review.like_articles.remove(user)
             print(review.like_articles.all(), 2)
         else:
             print(review.like_articles.all(), 3)
-            review.like_articles.add(user_email)
+            review.like_articles.add(user)
             print(review.like_articles.all(), 4)
         print(review.like_articles.all())
-        serializer = ReviewSerializer(user)
+        serializer = ReviewBestSerializer(user)
         return Response(serializer.data)

@@ -5,7 +5,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.email')
     class Meta:
         model = Articles
-        fields = ("id", "title", "content", "created_at", "updated_at", "user", "like_articles")
+        fields = ("id", "title", "content", "created_at", "updated_at", "user")
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.email')
@@ -19,6 +19,8 @@ class CommentSerializer(serializers.ModelSerializer):
 class ReviewBestSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.email')
     like = serializers.ReadOnlyField(source = "articles.like_users")
+    created_at = serializers.ReadOnlyField(source = "articles.created_at")
+    updated_at = serializers.ReadOnlyField(source = "articles.updated_at")
     class Meta:
         model = Articles
         fields = ("id", "title", "content", "created_at", "updated_at", "user", "like")
