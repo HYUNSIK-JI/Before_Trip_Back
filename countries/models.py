@@ -8,6 +8,7 @@ class Country(models.Model):
     content = models.TextField(blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+    country_code = models.CharField(max_length=255)
     like_country = models.ManyToManyField(User, related_name="like_country")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -15,10 +16,10 @@ class Country(models.Model):
 #     ariticles = models.ForeignKey(Articles, on_delete=models.CASCADE)
 #     image = models.ImageField(upload_to="images/", blank=True)
 
-class Comment(models.Model):
+class Comment1(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=80)
-    ariticles = models.ForeignKey(Articles, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    like_comment = models.ManyToManyField(User, related_name="like_comment")
+    like_comment1 = models.ManyToManyField(User, related_name="like_comment1")

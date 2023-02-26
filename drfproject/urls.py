@@ -20,6 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('articles/', include('articles.urls')),
-    path('countrys/', include('countrys.urls')),
+    path('country/', include('countries.urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]
