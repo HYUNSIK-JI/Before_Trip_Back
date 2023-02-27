@@ -54,8 +54,6 @@ class ReviewDetail(APIView):
         review = self.get_object(pk)
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 class ReviewCommentList(APIView):
 
     def get(self, request, pk, country_code):
@@ -107,7 +105,7 @@ class ReviewComment(APIView):
     
 class ReviewBest(APIView):
     def get(self, request, country_code):
-        reviews = Country.objects.annotate(nums=Count('like_country')).order_by("-nums")
+        reviews = Country.objects.annotate(nums=Count('like_country')).order_by("-nums").filter(country_code=country_code)
         serializer = ReviewBestSerializer(reviews, many=True)
         return Response(serializer.data)
 
@@ -121,14 +119,10 @@ class Reviewlike(APIView):
 
         user = User.objects.get(pk=user_pk)
 
-        if user_pk in review.like_country.all():
-            print(review.like_country.all(), 1)
-            review.like_country.remove(user_pk)
-            print(review.like_country.all(), 2)
+        if user in review.like_country.all():
+            review.like_country.remove(user)
         else:
-            print(review.like_country.all(), 3)
-            review.like_country.add(user_pk)
-            print(review.like_country.all(), 4)
-        print(review.like_country.all())
+            review.like_country.add(user)
+            
         serializer = ReviewBestSerializer(review)
         return Response(serializer.data)
