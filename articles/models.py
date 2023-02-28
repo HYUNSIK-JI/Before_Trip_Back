@@ -16,6 +16,7 @@ class Articles(models.Model):
 #     image = models.ImageField(upload_to="images/", blank=True)
 
 class Comment(models.Model):
+    id = models.AutoField(primary_key=True, null=False, blank=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=80)
     ariticles = models.ForeignKey(Articles, on_delete=models.CASCADE)
