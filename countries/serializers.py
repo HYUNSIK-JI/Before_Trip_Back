@@ -1,13 +1,22 @@
 from rest_framework import serializers
-from .models import Country, Comment1
+from .models import Country, Comment1, Photo
+
+
+class PhotoSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Photo
+      fields = ['image']
 
 class ReviewSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.email')
     country_code = serializers.ReadOnlyField(source = 'Country.country_code')
+    images = PhotoSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Country
-        fields = ("id", "title", "content", "created_at", "updated_at", "user", "country_code")
-
+        fields = ("id", "title", "content", "created_at", "updated_at", "user", "country_code", "images")
+    
+    
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.email')
     countries = serializers.ReadOnlyField(source = "country.pk")

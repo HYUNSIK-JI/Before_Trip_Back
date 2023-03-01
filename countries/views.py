@@ -2,14 +2,16 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
 from django.http import Http404
 from users.models import User
 from .serializers import ReviewSerializer, CommentSerializer, ReviewBestSerializer
 from users.views import AuthAPIView
-from .models import Country, Comment1
-import jwt
+from .models import Country, Comment1, Photo
+import jwt, io, json
 from django.db.models import Q, Count
 from drfproject.settings import SECRET_KEY, SIMPLE_JWT
+
 # Create your views here.
 
 class ReviewList(APIView):
@@ -22,12 +24,18 @@ class ReviewList(APIView):
         serializer = ReviewSerializer(data=request.data)
         
         if serializer.is_valid():
+            last_pk = Country.objects.all().order_by("-pk")[0].id
+            print(last_pk)
             access = request.COOKIES.get('access', None)
             
             payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
             
             pk = payload.get('user_id')
+
             
+            # print(request.data.get('image'))
+            for image_data in request.data.get('image'):
+                Photo.objects.create(country_id=last_pk + 1, image=image_data)
             serializer.save(user=User.objects.get(pk=pk), country_code=country_code)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -39,19 +47,18 @@ class ReviewDetail(APIView):
         except Country.DoesNotExist:
             raise Http404
     def get(self, request, pk, country_code):
-        review = self.get_object(pk)
-        
+        review = self.get_object(pk, country_code)
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
     def patch(self, request, pk, country_code):
-        review = self.get_object(pk)
+        review = self.get_object(pk, country_code)
         serializer = ReviewSerializer(review, data=request.data)        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def delete(self, request, pk, country_code):
-        review = self.get_object(pk)
+        review = self.get_object(pk, country_code)
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 class ReviewCommentList(APIView):

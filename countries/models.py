@@ -12,9 +12,9 @@ class Country(models.Model):
     like_country = models.ManyToManyField(User, related_name="like_country")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-# class Photo(models.Model):
-#     ariticles = models.ForeignKey(Articles, on_delete=models.CASCADE)
-#     image = models.ImageField(upload_to="images/", blank=True)
+class Photo(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="images/", blank=True)
 
 class Comment1(models.Model):
     id = models.AutoField(primary_key=True, null=False, blank=False) 
