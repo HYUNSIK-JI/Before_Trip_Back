@@ -3,9 +3,12 @@ from .models import Country, Comment1, Photo
 
 
 class PhotoSerializer(serializers.ModelSerializer):
-   class Meta:
-      model = Photo
-      fields = ['image']
+    
+    image = serializers.ImageField(use_url=True)
+    
+    class Meta:
+        model = Photo
+        fields = ['image']
 
 class ReviewSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.email')
@@ -15,6 +18,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
         fields = ("id", "title", "content", "created_at", "updated_at", "user", "country_code", "images")
+    
     
     
 class CommentSerializer(serializers.ModelSerializer):

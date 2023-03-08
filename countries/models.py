@@ -13,9 +13,12 @@ class Country(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Photo(models.Model):
+    id = models.AutoField(primary_key=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="images/", blank=True)
 
+    def __int__(self):
+        return self.id
 class Comment1(models.Model):
     id = models.AutoField(primary_key=True, null=False, blank=False) 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
