@@ -7,6 +7,6 @@ ADD . /srv/code
 
 
 WORKDIR /srv/code
-ADD requirement.txt /srv/code/
+ADD requirements.txt /srv/code/
 RUN python3 -m pip install --upgrade pip
-RUN pip install -r requirement.txt
+RUN pip install -r requirements.txt
